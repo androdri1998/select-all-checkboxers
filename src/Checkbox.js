@@ -1,22 +1,39 @@
 import React, { useState, useEffect } from 'react';
 
-export default function Checkbox({value, onChange}){
+export default function Checkbox({value, onChange, onClick = () => {}}){
+    const [check, setCheck] = useState(value || false);
+    const [click, setClick] = useState(false);
 
-  const [checked, setChecked] = useState(value || false);
+    useEffect(() => {
+        if(onChange)
+            onChange(check)
+    }, [check]);
 
-  useEffect(() => {
-    if(onChange)
-      onChange(checked)
-  }, [checked]);
+    useEffect(() => {
+        if(click){
+            if(onClick)
+                onClick(check);
+            
+            setClick(false);
+        }
+    }, [click]);
 
-  useEffect(() => {
-    setChecked(value);
-  }, [value]);
+    function handlerClick() {
+        setClick(true);
+    }
 
-  return (
-    <input 
-      type="checkbox" 
-      onChange={(ev) => {setChecked(ev.target.checked)}} 
-      checked={checked} />
-  )
+    useEffect(() => {
+        setCheck(value);
+    }, [value])
+
+    function handlerCheck(ev){
+        setCheck(ev.target.checked);
+    }
+
+    return <input 
+                type="checkbox" 
+                onClick={handlerClick}
+                onChange={handlerCheck} 
+                checked={check} />
+
 }
